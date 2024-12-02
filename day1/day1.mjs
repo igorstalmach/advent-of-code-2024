@@ -1,55 +1,63 @@
 import fs from "node:fs";
 
-/*
-  File parsing.
-*/
+const parseFile = () => {
+  const file = fs.readFileSync("./day1_input.txt", "utf8");
 
-// Read input from file.
-const file = fs.readFileSync("./day1_input.txt", "utf8");
+  // Split file into two arrays of numbers.
+  let firstArray = [];
+  let secondArray = [];
 
-// Split file into two arrays of numbers.
-let firstArray = [];
-let secondArray = [];
+  file.split("\n").forEach((line) => {
+    const parsedLine = line
+      .split(" ")
+      .filter((num) => num !== "")
+      .map((num) => parseInt(num));
 
-file.split("\n").forEach((line) => {
-  const parsedLine = line
-    .split(" ")
-    .filter((num) => num !== "")
-    .map((num) => parseInt(num));
+    firstArray.push(parsedLine[0]);
+    secondArray.push(parsedLine[1]);
+  });
 
-  firstArray.push(parsedLine[0]);
-  secondArray.push(parsedLine[1]);
-});
+  // Sort arrays in ascending order.
+  firstArray.sort((a, b) => a - b);
+  secondArray.sort((a, b) => a - b);
 
-// Sort arrays in ascending order.
-firstArray.sort((a, b) => a - b);
-secondArray.sort((a, b) => a - b);
+  return [firstArray, secondArray];
+};
 
 /*
   First part of the puzzle.
 */
 
-let distance = 0;
+const calculateDistance = () => {
+  const [firstArray, secondArray] = parseFile();
 
-/*
-  Divide each consecutive pair from each other.
-  abs(7 - 3) = 4
-  abs(3 - 7) = 4
-*/
+  let distance = 0;
 
-for (let i = 0; i < firstArray.length; i++) {
-  distance += Math.abs(firstArray[i] - secondArray[i]);
-}
+  /*
+    Divide each consecutive pair from each other.
+    abs(7 - 3) = 4
+    abs(3 - 7) = 4
+  */
 
-console.log(`Result of the first half: ${distance}`);
+  for (let i = 0; i < firstArray.length; i++) {
+    distance += Math.abs(firstArray[i] - secondArray[i]);
+  }
+
+  return distance;
+};
+
+console.log(`Result of the first half: ${calculateDistance()}`);
 
 /*
   Second part of the puzzle.
 */
 
-let [comparedIdx, comparedToIdx, occurrence, similarityScore] = [0, 0, 0, 0];
+const calculateSimilarityScore = () => {
+  const [firstArray, secondArray] = parseFile();
 
-/*
+  let [comparedIdx, comparedToIdx, occurrence, similarityScore] = [0, 0, 0, 0];
+
+  /*
   Imagine two tapes (here, firstArray and secondArray).
 
   - If number on left > number on right, then shift right tape up.
@@ -79,21 +87,24 @@ let [comparedIdx, comparedToIdx, occurrence, similarityScore] = [0, 0, 0, 0];
   Continue until left tape is gone (array is empty). Up to three tape operations in a single iteration.
 */
 
-while (comparedIdx < firstArray.length - 1) {
-  if (firstArray[comparedIdx] > secondArray[comparedToIdx]) {
-    comparedToIdx++;
+  while (comparedIdx < firstArray.length - 1) {
+    if (firstArray[comparedIdx] > secondArray[comparedToIdx]) {
+      comparedToIdx++;
+    }
+
+    if (firstArray[comparedIdx] === secondArray[comparedToIdx]) {
+      occurrence++;
+      comparedToIdx++;
+    }
+
+    if (firstArray[comparedIdx] < secondArray[comparedToIdx]) {
+      similarityScore += firstArray[comparedIdx] * occurrence;
+      occurrence = 0;
+      comparedIdx++;
+    }
   }
 
-  if (firstArray[comparedIdx] === secondArray[comparedToIdx]) {
-    occurrence++;
-    comparedToIdx++;
-  }
+  return similarityScore;
+};
 
-  if (firstArray[comparedIdx] < secondArray[comparedToIdx]) {
-    similarityScore += firstArray[comparedIdx] * occurrence;
-    occurrence = 0;
-    comparedIdx++;
-  }
-}
-
-console.log(`Result of the second half: ${similarityScore}`);
+console.log(`Result of the second half: ${calculateSimilarityScore()}`);
