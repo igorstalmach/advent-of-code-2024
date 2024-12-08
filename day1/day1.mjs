@@ -1,5 +1,9 @@
 import fs from "node:fs";
 
+/*
+  Utils
+*/
+
 const parseFile = () => {
   const file = fs.readFileSync("./day1_input.txt", "utf8");
 
@@ -28,9 +32,7 @@ const parseFile = () => {
   First part of the puzzle.
 */
 
-const calculateDistance = () => {
-  const [firstArray, secondArray] = parseFile();
-
+const calculateDistance = (firstArray, secondArray) => {
   let distance = 0;
 
   /*
@@ -46,15 +48,13 @@ const calculateDistance = () => {
   return distance;
 };
 
-console.log(`Result of the first half: ${calculateDistance()}`);
+console.log(`Result of the first half: ${calculateDistance(...parseFile())}`);
 
 /*
   Second part of the puzzle.
 */
 
-const calculateSimilarityScore = () => {
-  const [firstArray, secondArray] = parseFile();
-
+const calculateSimilarityScore = (firstArray, secondArray) => {
   let [comparedIdx, comparedToIdx, occurrence, similarityScore] = [0, 0, 0, 0];
 
   /*
@@ -107,4 +107,6 @@ const calculateSimilarityScore = () => {
   return similarityScore;
 };
 
-console.log(`Result of the second half: ${calculateSimilarityScore()}`);
+console.log(
+  `Result of the second half: ${calculateSimilarityScore(...parseFile())}`
+);
